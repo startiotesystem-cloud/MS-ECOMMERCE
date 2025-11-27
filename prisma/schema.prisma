@@ -1,0 +1,200 @@
+// -------------------------------------
+//  DATASOURCE & GENERATOR
+// -------------------------------------
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+//
+// -------------------------------------
+//  MODELOS PRINCIPALES
+// -------------------------------------
+//
+
+model Product {
+  id             String     @id @default(uuid())
+  name           String
+  bar_code       String?
+  purchase_price Int
+  sale_price     Int
+  tax            String?
+  reference      String?
+  description    String?
+  slug           String?
+  status         String?
+  brand_id       String?
+
+  // RELACIONES
+  brand            Brand?            @relation(fields: [brand_id], references: [id])
+  images           ProductImage[]
+  skus             Sku[]
+  categories       ProductsCategories[]
+  cart_items       CartItem[]
+  order_items      OrderItem[]
+
+  created_at      DateTime @default(now())
+  updated_at      DateTime @updatedAt
+}
+
+
+// -------------------------------------
+// PRODUCT IMAGES
+// -------------------------------------
+
+model ProductImage {
+  id         String  @id @default(uuid())
+  url        String
+  is_main    Boolean @default(false)
+
+  product_id String
+  product    Product @relation(fields: [product_id], references: [id])
+}
+
+
+// -------------------------------------
+// SKU (Variantes del producto)
+// -------------------------------------
+
+model Sku {
+  id            String  @id @default(uuid())
+  sku           String
+  price_override Int?
+  stock         Int
+  status        String?
+  product_id    String
+
+  product       Product   @relation(fields: [product_id], references: [id])
+  cart_items    CartItem[]
+  order_items   OrderItem[]
+}
+
+
+// -------------------------------------
+// CATEGORIES
+// -------------------------------------
+
+model Category {
+  id          String       @id @default(uuid())
+  name        String
+  slug        String?
+  description String?
+  parent_id   String?
+
+  parent      Category?    @relation("CategoryParent", fields: [parent_id], references: [id])
+  children    Category[]   @relation("CategoryParent")
+  products    ProductsCategories[]
+
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+}
+
+
+// -------------------------------------
+// MANY-TO-MANY PRODUCT - CATEGORY
+// -------------------------------------
+
+model ProductsCategories {
+  id          String   @id @default(uuid())
+
+  product_id  String
+  category_id String
+
+  product     Product  @relation(fields: [product_id], references: [id])
+  category    Category @relation(fields: [category_id], references: [id])
+
+  @@unique([product_id, category_id])
+}
+
+
+// -------------------------------------
+// CART
+// -------------------------------------
+
+model Cart {
+  id        String     @id @default(uuid())
+  user_id   String
+
+  items     CartItem[]
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+}
+
+
+// -------------------------------------
+// CART ITEMS
+// -------------------------------------
+
+model CartItem {
+  id         String @id @default(uuid())
+  user_id    String?
+  quantity   Int
+  unit_price Int
+
+  cart_id    String
+  product_id String
+  sku_id     String?
+
+  cart       Cart    @relation(fields: [cart_id], references: [id])
+  product    Product @relation(fields: [product_id], references: [id])
+  sku        Sku?    @relation(fields: [sku_id], references: [id])
+
+  created_at DateTime @default(now())
+}
+
+
+// -------------------------------------
+// ORDERS
+// -------------------------------------
+
+model Order {
+  id                 String      @id @default(uuid())
+  user_id            String
+  status             String
+  sub_total          Int
+  percentage_discount Int?
+  total              Int
+  shipment           Int?
+
+  items              OrderItem[]
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+}
+
+
+// -------------------------------------
+// ORDER ITEMS
+// -------------------------------------
+
+model OrderItem {
+  id         String   @id @default(uuid())
+  quantity   Int
+  price      Int
+
+  order_id   String
+  product_id String
+  sku_id     String?
+
+  order      Order    @relation(fields: [order_id], references: [id])
+  product    Product  @relation(fields: [product_id], references: [id])
+  sku        Sku?     @relation(fields: [sku_id], references: [id])
+}
+
+
+
+// -------------------------------------
+// BRAND (OPCIONAL PERO NECESARIO POR TU DIAGRAMA)
+// -------------------------------------
+
+model Brand {
+  id    String    @id @default(uuid())
+  name  String
+  slug  String?
+
+  products Product[]
+}
