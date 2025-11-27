@@ -4,11 +4,11 @@ export abstract class BaseEntity {
   updatedAt: Date;
   deletedAt?: Date | null;
 
-  constructor() {
-    this.id = crypto.randomUUID();
-    this.createdAt = new Date();
-    this.updatedAt = new Date();
-    this.deletedAt = null;
+  constructor(props?: Partial<BaseEntity>) {
+    this.id = props?.id ?? crypto.randomUUID();
+    this.createdAt = props?.createdAt ?? new Date();
+    this.updatedAt = props?.updatedAt ?? new Date();
+    this.deletedAt = props?.deletedAt ?? null;
   }
 
   markAsDeleted() {
