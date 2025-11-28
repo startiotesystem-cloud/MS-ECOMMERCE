@@ -7,7 +7,7 @@ export class ProductEntity extends BaseEntity {
   barCode?: string | null;
   purchasePrice: number;
   salePrice: number;
-  tax?: string | null;
+  tax?: number;
   reference?: string | null;
   description?: string | null;
   slug?: string | null;

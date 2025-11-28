@@ -3,7 +3,7 @@ export class CreateProductDto {
   purchasePrice: number;
   salePrice: number;
   barCode?: string;
-  tax?: string;
+  tax?: number;
   reference?: string;
   description?: string;
   slug?: string;

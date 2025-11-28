@@ -19,6 +19,7 @@ export class PrismaProductRepository implements IProductRepository {
   }
 
   async create(entity: ProductEntity): Promise<ProductEntity> {
+    
     const raw = ProductMapper.toPersistence(entity);
 
     const data = await this.prisma.product.create({

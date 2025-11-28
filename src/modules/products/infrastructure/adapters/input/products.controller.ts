@@ -14,6 +14,7 @@ export class ProductsController {
 
   @Post()
   create(@Body() body: CreateProductDto) {
+    
     return this.createProduct.execute(body);
   }
 

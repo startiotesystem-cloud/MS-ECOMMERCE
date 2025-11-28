@@ -20,9 +20,9 @@ model Product {
   id             String  @id @default(uuid())
   name           String
   bar_code       String?
-  purchase_price Int
-  sale_price     Int
-  tax            String?
+  purchase_price Float
+  sale_price     Float
+  tax            Float?
   reference      String?
   description    String?
   slug           String?
