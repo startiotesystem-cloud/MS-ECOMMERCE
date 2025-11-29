@@ -1,10 +1,14 @@
-import { ProductEntity } from "../../domain/entities/product.entity";
+import { Transform } from "class-transformer";
 
-export class createProductImageDTO {
+export class CreateProductImageDTO {
 
-    url: string;
-    is_main: boolean;
-    alt: string;
-    productId: string;
+  @Transform(({ value }) => {
+    if (value === 'true') return true;
+    if (value === 'false') return false;
+    return value;
+  })
+  is_main: boolean;
 
+  alt: string;
+  product_id: string;
 }
