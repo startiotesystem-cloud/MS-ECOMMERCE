@@ -1,12 +1,20 @@
-import { Body, Controller, Get, Param, Post, UploadedFile, UseInterceptors } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Post, Put, UploadedFile, UseInterceptors } from "@nestjs/common";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { CreateProductImageDTO } from "src/modules/products/application/dto/create-producImage.dto";
 import { CreateProductImageUseCase } from "src/modules/products/application/use-cases/produc-image/create-producImage.usecase";
+import { UpdateProductImageUseCase } from "src/modules/products/application/use-cases/produc-image/update-productImage.usecase";
+import { DeleteProductImageUseCase } from "src/modules/products/application/use-cases/produc-image/delete-productImage.usecase";
+import { GetAllProductImagesUseCase } from "src/modules/products/application/use-cases/produc-image/get-productImages.use";
+import { GetProductImageByIdUseCase } from "src/modules/products/application/use-cases/produc-image/get-productImage.use";
 
 @Controller('products-images')
 export class ProductsImagesController {
     constructor(
-        private readonly createProducImage: CreateProductImageUseCase
+        private readonly createProducImage: CreateProductImageUseCase,
+        private readonly updateProducImage: UpdateProductImageUseCase,
+        private readonly deleteProducImage: DeleteProductImageUseCase,
+        private readonly getAllProducImages: GetAllProductImagesUseCase,
+        private readonly getProducImageById: GetProductImageByIdUseCase,
     ) { }
 
    @Post()
@@ -23,6 +31,41 @@ create(
     is_main: body.is_main === 'true',   // convertir string a boolean
     productId: body.product_id          // mapear snake_case → camelCase
   });
+}
+
+@Get()
+findAll() {
+  return this.getAllProducImages.execute();
+}
+
+@Get(':id')
+findById(@Param('id') id: string) {
+  return this.getProducImageById.execute(id);
+}
+
+@Put(':id')
+@UseInterceptors(FileInterceptor('file'))
+update(
+  @Param('id') id: string,
+  @UploadedFile() file: Express.Multer.File | undefined,
+  @Body() body: any
+) {
+  const updateData: any = {
+    alt: body.alt,
+    isMain: body.is_main === 'true',
+    productId: body.product_id
+  };
+  
+  if (file) {
+    updateData.file = file;
+  }
+  
+  return this.updateProducImage.execute(id, updateData);
+}
+
+@Delete(':id')
+delete(@Param('id') id: string) {
+  return this.deleteProducImage.execute(id);
 }
 
 
