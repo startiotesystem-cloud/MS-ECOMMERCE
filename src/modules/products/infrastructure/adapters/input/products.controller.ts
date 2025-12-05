@@ -1,6 +1,7 @@
 import { Body, Controller, Delete, Get, Param, Post, Put, Query } from '@nestjs/common';
 import { CreateProductDto } from '../../../application/dto/create-product.dto';
 import { PaginationDto } from '../../../application/dto/pagination.dto';
+import { PaginatedResponse } from '../../../application/dto/paginated-response.dto';
 import { CreateProductUseCase } from 'src/modules/products/application/use-cases/product/create-product.usecase';
 import { GetAllProductsUseCase } from 'src/modules/products/application/use-cases/product/get-all-products.usecase';
 import { GetProductByIdUseCase } from 'src/modules/products/application/use-cases/product/get-product-by-id.usecase';
@@ -25,7 +26,7 @@ export class ProductsController {
   }
 
   @Get()
-  findAll(
+  async findAll(
     @Query('page') page?: string,
     @Query('limit') limit?: string,
   ) {
@@ -33,7 +34,11 @@ export class ProductsController {
       page ? parseInt(page) : undefined,
       limit ? parseInt(limit) : undefined,
     );
-    return this.getAllProducts.execute(pagination);
+    const result = await this.getAllProducts.execute(pagination);
+    
+    // Si es PaginatedResponse, retornamos directamente
+    // Si es array, lo envolveremos en el interceptor
+    return result;
   }
 
   @Get(':id')

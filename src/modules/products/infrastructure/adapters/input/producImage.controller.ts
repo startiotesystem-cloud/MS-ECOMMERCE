@@ -35,7 +35,7 @@ create(
 }
 
 @Get()
-findAll(
+async findAll(
   @Query('page') page?: string,
   @Query('limit') limit?: string,
 ) {
@@ -43,7 +43,11 @@ findAll(
     page ? parseInt(page) : undefined,
     limit ? parseInt(limit) : undefined,
   );
-  return this.getAllProducImages.execute(pagination);
+  const result = await this.getAllProducImages.execute(pagination);
+  
+  // Si es PaginatedResponse, retornamos directamente
+  // Si es array, lo envolveremos en el interceptor
+  return result;
 }
 
 @Get(':id')

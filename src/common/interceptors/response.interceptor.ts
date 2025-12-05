@@ -27,7 +27,20 @@ export class ResponseInterceptor<T> implements NestInterceptor<T, unknown> {
           return data;
         }
 
-        // Envolvemos la respuesta con el helper.
+        // Si es una respuesta paginada (tiene totalPages), envolvemos con data como el paginatedResponse
+        if (
+          data &&
+          typeof data === 'object' &&
+          'data' in data &&
+          'total' in data &&
+          'page' in data &&
+          'limit' in data &&
+          'totalPages' in data
+        ) {
+          return ResponseHelper.success(data);
+        }
+
+        // Envolvemos la respuesta normal con el helper.
         return ResponseHelper.success(data as T);
       }),
       catchError((err: unknown) => {
