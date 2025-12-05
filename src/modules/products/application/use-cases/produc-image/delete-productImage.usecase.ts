@@ -10,6 +10,6 @@ export class DeleteProductImageUseCase {
   ) {}
 
   async execute(id: string | number): Promise<void> {
-    return this.repository.delete(id);
+    return this.repository.softDelete(id);
   }
 }

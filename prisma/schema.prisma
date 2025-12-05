@@ -39,6 +39,7 @@ model Product {
 
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
+  deleted_at DateTime?
 }
 
 // -------------------------------------
@@ -54,6 +55,7 @@ model ProductImage {
   
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
+  deleted_at DateTime?
 
   product_id String
   product    Product @relation(fields: [product_id], references: [id])

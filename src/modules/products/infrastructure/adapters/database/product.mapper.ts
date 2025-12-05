@@ -18,6 +18,7 @@ status: raw.status ?? undefined,
 brandId: raw.brand_id ?? undefined,
 createdAt: raw.created_at,
 updatedAt: raw.updated_at,
+deletedAt: raw.deleted_at ?? undefined,
 });
 }
 
@@ -37,6 +38,7 @@ status: entity.status ?? null,
 brand_id: entity.brandId ?? null,
 created_at: entity.createdAt,
 updated_at: entity.updatedAt,
+deleted_at: entity.deletedAt ?? null,
 };
 }
 }

@@ -1,5 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { IProductRepository } from 'src/modules/products/domain/repositories/product.repository';
+import { PaginationDto } from '../../dto/pagination.dto';
 
 
 
@@ -10,7 +11,7 @@ export class GetAllProductsUseCase {
     private readonly repository: IProductRepository,
   ) {}
 
-  execute() {
-    return this.repository.findAll();
+  execute(pagination?: PaginationDto) {
+    return this.repository.findAll(pagination);
   }
 }

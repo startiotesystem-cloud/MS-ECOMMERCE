@@ -1,5 +1,6 @@
-import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query } from '@nestjs/common';
 import { CreateProductDto } from '../../../application/dto/create-product.dto';
+import { PaginationDto } from '../../../application/dto/pagination.dto';
 import { CreateProductUseCase } from 'src/modules/products/application/use-cases/product/create-product.usecase';
 import { GetAllProductsUseCase } from 'src/modules/products/application/use-cases/product/get-all-products.usecase';
 import { GetProductByIdUseCase } from 'src/modules/products/application/use-cases/product/get-product-by-id.usecase';
@@ -24,8 +25,15 @@ export class ProductsController {
   }
 
   @Get()
-  findAll() {
-    return this.getAllProducts.execute();
+  findAll(
+    @Query('page') page?: string,
+    @Query('limit') limit?: string,
+  ) {
+    const pagination = new PaginationDto(
+      page ? parseInt(page) : undefined,
+      limit ? parseInt(limit) : undefined,
+    );
+    return this.getAllProducts.execute(pagination);
   }
 
   @Get(':id')

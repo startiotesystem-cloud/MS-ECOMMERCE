@@ -12,6 +12,7 @@ export class ProductImageMapper {
       productId: raw.product_id ?? undefined,
       createdAt: raw.created_at,
       updatedAt: raw.updated_at,
+      deletedAt: raw.deleted_at ?? undefined,
     });
   }
 
@@ -25,6 +26,7 @@ export class ProductImageMapper {
       product_id: entity.productId ?? null,
       created_at: entity.createdAt,
       updated_at: entity.updatedAt,
+      deleted_at: entity.deletedAt ?? null,
     };
   }
 }

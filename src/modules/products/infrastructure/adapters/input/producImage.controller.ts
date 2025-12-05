@@ -1,6 +1,7 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, UploadedFile, UseInterceptors } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, UploadedFile, UseInterceptors } from "@nestjs/common";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { CreateProductImageDTO } from "src/modules/products/application/dto/create-producImage.dto";
+import { PaginationDto } from "src/modules/products/application/dto/pagination.dto";
 import { CreateProductImageUseCase } from "src/modules/products/application/use-cases/produc-image/create-producImage.usecase";
 import { UpdateProductImageUseCase } from "src/modules/products/application/use-cases/produc-image/update-productImage.usecase";
 import { DeleteProductImageUseCase } from "src/modules/products/application/use-cases/produc-image/delete-productImage.usecase";
@@ -34,8 +35,15 @@ create(
 }
 
 @Get()
-findAll() {
-  return this.getAllProducImages.execute();
+findAll(
+  @Query('page') page?: string,
+  @Query('limit') limit?: string,
+) {
+  const pagination = new PaginationDto(
+    page ? parseInt(page) : undefined,
+    limit ? parseInt(limit) : undefined,
+  );
+  return this.getAllProducImages.execute(pagination);
 }
 
 @Get(':id')
