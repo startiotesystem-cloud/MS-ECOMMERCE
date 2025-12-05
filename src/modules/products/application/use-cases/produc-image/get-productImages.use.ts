@@ -10,7 +10,7 @@ export class GetAllProductImagesUseCase {
     private readonly repository: IProductImageRepository,
   ) {}
 
-  execute(pagination?: PaginationDto) {
+  execute(pagination?: PaginationDto | undefined) {
     return this.repository.findAll(pagination);
   }
 }

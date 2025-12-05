@@ -30,6 +30,32 @@ export class ResponseHelper {
       return data as T;
     }
 
+    // Detectar si es una respuesta paginada (tiene data, total, page, limit, totalPages)
+    const isPaginatedResponse =
+      data &&
+      typeof data === 'object' &&
+      'data' in data &&
+      'total' in data &&
+      'page' in data &&
+      'limit' in data &&
+      'totalPages' in data &&
+      Array.isArray((data as any).data);
+
+    if (isPaginatedResponse) {
+      // Para respuestas paginadas, retornar con estructura: { success, message, data: [...], total, page, limit, totalPages, timestamp }
+      const paginatedData = data as any;
+      return {
+        success: true,
+        message,
+        data: paginatedData.data,
+        total: paginatedData.total,
+        page: paginatedData.page,
+        limit: paginatedData.limit,
+        totalPages: paginatedData.totalPages,
+        timestamp: new Date().toISOString(),
+      } as any;
+    }
+
     return {
       success: true,
       message,

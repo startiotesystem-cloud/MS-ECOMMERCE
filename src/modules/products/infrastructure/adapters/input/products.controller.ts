@@ -30,15 +30,17 @@ export class ProductsController {
     @Query('page') page?: string,
     @Query('limit') limit?: string,
   ) {
-    const pagination = new PaginationDto(
-      page ? parseInt(page) : undefined,
-      limit ? parseInt(limit) : undefined,
-    );
-    const result = await this.getAllProducts.execute(pagination);
-    
-    // Si es PaginatedResponse, retornamos directamente
-    // Si es array, lo envolveremos en el interceptor
-    return result;
+    // Solo usar paginación si se proporciona al menos un parámetro
+    if (page || limit) {
+      const pagination = new PaginationDto(
+        page ? parseInt(page) : undefined,
+        limit ? parseInt(limit) : undefined,
+      );
+      return this.getAllProducts.execute(pagination);
+    }
+
+    // Sin paginación, retornar todos los productos
+    return this.getAllProducts.execute();
   }
 
   @Get(':id')

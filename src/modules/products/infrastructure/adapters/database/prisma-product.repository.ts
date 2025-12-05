@@ -29,12 +29,16 @@ export class PrismaProductRepository implements IProductRepository {
       orderBy: { created_at: 'desc' },
     });
 
-    return new PaginatedResponse(
-      data.map(ProductMapper.toDomain),
+    const mapped = data.map(ProductMapper.toDomain);
+    
+    // Retornamos un objeto plano con data al nivel superior
+    return {
+      data: mapped,
       total,
-      pagination.page,
-      pagination.limit,
-    );
+      page: pagination.page,
+      limit: pagination.limit,
+      totalPages: Math.ceil(total / pagination.limit),
+    } as any;
   }
 
   async findById(id: string): Promise<ProductEntity | null> {

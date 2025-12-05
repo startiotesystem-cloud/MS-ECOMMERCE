@@ -30,12 +30,16 @@ export class PrismaProductImageRepository implements IProductImageRepository {
             orderBy: { created_at: 'desc' },
         });
 
-        return new PaginatedResponse(
-            data.map(ProductImageMapper.toDomain),
+        const mapped = data.map(ProductImageMapper.toDomain);
+        
+        // Retornamos un objeto plano con data al nivel superior
+        return {
+            data: mapped,
             total,
-            pagination.page,
-            pagination.limit,
-        );
+            page: pagination.page,
+            limit: pagination.limit,
+            totalPages: Math.ceil(total / pagination.limit),
+        } as any;
     }
 
     async findById(id: string): Promise<ProductImageEntity | null> {

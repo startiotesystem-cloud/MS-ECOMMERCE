@@ -11,7 +11,7 @@ export class GetAllProductsUseCase {
     private readonly repository: IProductRepository,
   ) {}
 
-  execute(pagination?: PaginationDto) {
+  execute(pagination?: PaginationDto | undefined) {
     return this.repository.findAll(pagination);
   }
 }

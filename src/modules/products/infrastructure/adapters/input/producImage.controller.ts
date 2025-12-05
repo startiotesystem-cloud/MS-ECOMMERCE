@@ -39,15 +39,17 @@ async findAll(
   @Query('page') page?: string,
   @Query('limit') limit?: string,
 ) {
-  const pagination = new PaginationDto(
-    page ? parseInt(page) : undefined,
-    limit ? parseInt(limit) : undefined,
-  );
-  const result = await this.getAllProducImages.execute(pagination);
-  
-  // Si es PaginatedResponse, retornamos directamente
-  // Si es array, lo envolveremos en el interceptor
-  return result;
+  // Solo usar paginación si se proporciona al menos un parámetro
+  if (page || limit) {
+    const pagination = new PaginationDto(
+      page ? parseInt(page) : undefined,
+      limit ? parseInt(limit) : undefined,
+    );
+    return this.getAllProducImages.execute(pagination);
+  }
+
+  // Sin paginación, retornar todas las imágenes
+  return this.getAllProducImages.execute();
 }
 
 @Get(':id')

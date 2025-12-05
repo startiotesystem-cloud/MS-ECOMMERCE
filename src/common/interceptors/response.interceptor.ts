@@ -15,32 +15,34 @@ export class ResponseInterceptor<T> implements NestInterceptor<T, unknown> {
   intercept(context: ExecutionContext, next: CallHandler): Observable<unknown> {
     return next.handle().pipe(
       map((data) => {
-        // Si la respuesta ya tiene la estructura esperada, la devolvemos tal cual.
+        // Si la respuesta ya tiene la estructura esperada (ya envuelta), la devolvemos tal cual.
         if (
           data &&
           typeof data === 'object' &&
           'success' in data &&
           'message' in data &&
-          'data' in data &&
           'timestamp' in data
         ) {
           return data;
         }
 
-        // Si es una respuesta paginada (tiene totalPages), envolvemos con data como el paginatedResponse
-        if (
+        // Detectar si es una respuesta paginada (tiene data array, total, page, limit, totalPages)
+        const isPaginatedResponse =
           data &&
           typeof data === 'object' &&
           'data' in data &&
           'total' in data &&
           'page' in data &&
           'limit' in data &&
-          'totalPages' in data
-        ) {
-          return ResponseHelper.success(data);
+          'totalPages' in data &&
+          Array.isArray((data as any).data);
+
+        if (isPaginatedResponse) {
+          // Para respuestas paginadas, usar ResponseHelper que maneja la estructura
+          return ResponseHelper.success(data as T);
         }
 
-        // Envolvemos la respuesta normal con el helper.
+        // Para respuestas normales (arrays o objetos simples)
         return ResponseHelper.success(data as T);
       }),
       catchError((err: unknown) => {
