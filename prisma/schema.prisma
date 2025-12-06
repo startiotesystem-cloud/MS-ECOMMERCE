@@ -76,6 +76,10 @@ model Sku {
   product     Product     @relation(fields: [product_id], references: [id])
   cart_items  CartItem[]
   order_items OrderItem[]
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  deleted_at DateTime?
 }
 
 // -------------------------------------
@@ -111,6 +115,10 @@ model ProductsCategories {
   product  Product  @relation(fields: [product_id], references: [id])
   category Category @relation(fields: [category_id], references: [id])
 
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  deleted_at DateTime?
+
   @@unique([product_id, category_id])
 }
 
@@ -126,6 +134,7 @@ model Cart {
 
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
+  deleted_at DateTime?
 }
 
 // -------------------------------------
@@ -147,6 +156,8 @@ model CartItem {
   sku     Sku?    @relation(fields: [sku_id], references: [id])
 
   created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  deleted_at DateTime?
 }
 
 // -------------------------------------
@@ -166,6 +177,7 @@ model Order {
 
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
+  deleted_at DateTime?
 }
 
 // -------------------------------------
@@ -184,6 +196,10 @@ model OrderItem {
   order   Order   @relation(fields: [order_id], references: [id])
   product Product @relation(fields: [product_id], references: [id])
   sku     Sku?    @relation(fields: [sku_id], references: [id])
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  deleted_at DateTime?
 }
 
 // -------------------------------------
@@ -196,4 +212,8 @@ model Brand {
   slug String?
 
   products Product[]
+
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  deleted_at DateTime?
 }
